@@ -77,6 +77,8 @@ public class LoginServlet extends BaseServlet {
             response.sendRedirect("./menu");
         } catch (SQLException ex) {
             Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+            request.setAttribute("erro", ex.getMessage());
+            render(request, response, "login.jsp");
         }
     }
 

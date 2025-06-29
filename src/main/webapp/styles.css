@@ -303,3 +303,8 @@ body {
         font-size: 28px;
     }
 }
+
+.msg-erro {
+    color: red;
+    margin: 5px 0;
+}

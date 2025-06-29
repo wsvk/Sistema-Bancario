@@ -18,6 +18,11 @@
                     <label for="password">Senha:</label>
                     <input type="password" id="password" name="senha" required>
                 </div>
+                
+                <% if (request.getAttribute("erro") != null) { %>
+                    <p class="msg-erro">${erro}</p>
+                <% } %>
+                
                 <div class="buttons">
                     <input type="submit" class="btn btn-primary" value="Entrar" />
                     <button type="button" onclick="navigation.back()" class="btn btn-secondary">Voltar</button>
