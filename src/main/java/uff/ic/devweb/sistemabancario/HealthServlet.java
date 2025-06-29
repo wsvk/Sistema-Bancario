@@ -23,19 +23,7 @@ import java.util.logging.Logger;
  * @author mila
  */
 @WebServlet(name = "HealthServlet", urlPatterns = {"/health"})
-public class HealthServlet extends HttpServlet {
-
-    private DB db;
-
-    @Override
-    public void init() throws ServletException {
-        db = new DB();
-    }
-
-    @Override
-    public void destroy() {
-        db.destroy();
-    }
+public class HealthServlet extends BaseServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -48,17 +36,14 @@ public class HealthServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-
         request.setAttribute("status", "OK");
         request.setAttribute("db_status", getDBStatus());
 
-        request.getRequestDispatcher("Health.jsp")
-                .forward(request, response);
+        render(request, response, "Health.jsp");
     }
 
     private String getDBStatus() {
-        try (PreparedStatement sql = db.get().prepareStatement("select count(*) from usuarios")) {;
+        try (PreparedStatement sql = getConn().prepareStatement("select count(*) from usuarios")) {;
             ResultSet result = sql.executeQuery();
             result.next();
             return result.getString(1) != null ? "UP" : "FAIL";
