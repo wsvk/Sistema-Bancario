@@ -12,7 +12,7 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Ok!!!</h1>
         <%= request.getAttribute("status") %>
+        <p>Status do Banco: <%= request.getAttribute("db_status") %></p>
     </body>
 </html>

@@ -12,6 +12,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,6 +24,18 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "HealthServlet", urlPatterns = {"/health"})
 public class HealthServlet extends HttpServlet {
+
+    private DB db;
+
+    @Override
+    public void init() throws ServletException {
+        db = new DB();
+    }
+
+    @Override
+    public void destroy() {
+        db.destroy();
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -32,11 +49,23 @@ public class HealthServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
+
         request.setAttribute("status", "OK");
-        
+        request.setAttribute("db_status", getDBStatus());
+
         request.getRequestDispatcher("Health.jsp")
                 .forward(request, response);
+    }
+
+    private String getDBStatus() {
+        try (PreparedStatement sql = db.get().prepareStatement("select count(*) from usuarios")) {;
+            ResultSet result = sql.executeQuery();
+            result.next();
+            return result.getString(1) != null ? "UP" : "FAIL";
+        } catch (SQLException ex) {
+            Logger.getLogger(HealthServlet.class.getName()).log(Level.SEVERE, null, ex);
+            return "FAIL";
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
