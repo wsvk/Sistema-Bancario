@@ -70,7 +70,9 @@ public class CadastroServlet extends BaseServlet {
 
             long id = 0;
             if (stmt.executeUpdate() == 0) {
-                throw new RuntimeException("falha ao inserir no banco");
+                request.setAttribute("erro", "falha ao inserir no banco");
+                render(request, response, "cadastro.jsp");
+                return;
             }
 
             try (ResultSet rs = stmt.getGeneratedKeys()) {
@@ -90,6 +92,7 @@ public class CadastroServlet extends BaseServlet {
         } catch (SQLException ex) {
             request.setAttribute("erro", ex.getMessage());
             Logger.getLogger(CadastroServlet.class.getName()).log(Level.SEVERE, null, ex);
+            render(request, response, "cadastro.jsp");
         }
     }
 
