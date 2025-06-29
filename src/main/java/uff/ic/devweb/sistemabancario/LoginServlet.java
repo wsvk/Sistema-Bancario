@@ -11,6 +11,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import uff.ic.devweb.sistemabancario.model.Usuario;
 
 /**
  *
@@ -45,7 +51,33 @@ public class LoginServlet extends BaseServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // TODO: pegar os dados do form e tentar criar o login
+        String email, senha;
+
+        email = request.getParameter("email");
+        senha = request.getParameter("senha");
+
+        try (PreparedStatement stmt = getConn().prepareStatement("SELECT * FROM usuarios WHERE email = ? and senha = ?")) {
+            stmt.setString(1, email);
+            stmt.setString(2, senha);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (!rs.next()) {
+                request.setAttribute("erro", "email ou senha incorretos");
+                render(request, response, "login.jsp");
+                return;
+            }
+
+            request.getSession().setAttribute("usuario", new Usuario(
+                    rs.getLong("id"),
+                    rs.getString("nome"),
+                    rs.getString("email"),
+                    "<omitido>"
+            ));
+            response.sendRedirect("./menu");
+        } catch (SQLException ex) {
+            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
