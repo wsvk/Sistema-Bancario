@@ -12,6 +12,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import uff.ic.devweb.sistemabancario.model.Usuario;
 
 /**
  *
@@ -40,5 +46,9 @@ public class BaseServlet extends HttpServlet {
 
         request.setAttribute("page", page);
         request.getRequestDispatcher("layout.jsp").forward(request, response);
+    }
+
+    protected Usuario usuarioAtual(HttpServletRequest request) {
+        return (Usuario) request.getSession().getAttribute("usuario");
     }
 }

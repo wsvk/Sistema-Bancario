@@ -15,6 +15,6 @@
     <body>
         <div id="conteudo">
             <jsp:include page="${page}" />
-      </div>
+        </div>
     </body>
 </html>

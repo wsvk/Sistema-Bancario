@@ -5,10 +5,12 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-
 <%
-  request.setAttribute("page", "home.jsp");
-  RequestDispatcher dispatcher = request.getRequestDispatcher("layout.jsp");
-  dispatcher.forward(request, response);
+    if (session.getAttribute("usuario") != null) {
+        response.sendRedirect("./menu");
+        return;
+    }
+    request.setAttribute("page", "home.jsp");
+    RequestDispatcher dispatcher = request.getRequestDispatcher("layout.jsp");
+    dispatcher.forward(request, response);
 %>
