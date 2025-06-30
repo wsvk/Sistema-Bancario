@@ -1,6 +1,7 @@
 # Sistema Bancario
 
 Trabalho da disciplina de introducao ao desenvolvimento web.
+Rode pelo Netbeans.
 
 ## 🗄️ Banco de Dados (PostgreSQL + Docker)
 
