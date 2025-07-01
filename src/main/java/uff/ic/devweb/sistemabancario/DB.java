@@ -21,7 +21,7 @@ public class DB {
     public DB() {
         try {
             Class.forName("org.postgresql.Driver");
-            conn = DriverManager.getConnection("jdbc:postgresql://localhost:5433/sistema_bancario", "devweb", "123");
+            conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/sistema_bancario", "devweb", "123");
         } catch (SQLException ex) {
             Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
