@@ -56,16 +56,6 @@ VALUES
   (NULL, 2, 'DEPOSITO', 500.00),
   (1, 2, 'TRANSFERENCIA', 200.00);
 
-  -- Criação da tabela de investimentos
-CREATE TABLE investimentos (
-    id SERIAL PRIMARY KEY,
-    id_conta INT NOT NULL,
-    tipo VARCHAR(20) NOT NULL,
-    valor DECIMAL(10,2) NOT NULL,
-    data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_conta) REFERENCES contas(id)
-);
-
 -- Inserção de investimentos
 INSERT INTO investimentos (id_conta, tipo, valor)
 VALUES

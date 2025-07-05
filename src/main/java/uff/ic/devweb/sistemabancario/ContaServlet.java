@@ -67,7 +67,7 @@ public class ContaServlet extends BaseServlet {
     }
     
     private Conta buscarConta(long contaId, long usuarioId) {
-        try (Connection conn = getConn();
+        try (Connection conn = DB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      "SELECT id, id_usuario, saldo, tipo FROM contas WHERE id = ? AND id_usuario = ?")) {
             
@@ -94,7 +94,7 @@ public class ContaServlet extends BaseServlet {
     private List<Transacao> buscarTransacoesDaConta(long contaId) {
         List<Transacao> transacoes = new ArrayList<>();
         
-        try (Connection conn = getConn();
+        try (Connection conn = DB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      "SELECT t.id, t.conta_origem_id, t.conta_destino_id, t.tipo, t.valor, t.data, " +
                      "o.tipo as tipo_origem, d.tipo as tipo_destino, " +

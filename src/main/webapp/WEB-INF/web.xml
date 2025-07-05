@@ -8,20 +8,4 @@
             30
         </session-timeout>
     </session-config>
-    <servlet>
-        <servlet-name>InvestirServlet</servlet-name>
-        <servlet-class>uff.ic.devweb.sistemabancario.InvestirServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>InvestirServlet</servlet-name>
-        <url-pattern>/investir</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>MeusInvestimentosServlet</servlet-name>
-        <servlet-class>uff.ic.devweb.sistemabancario.MeusInvestimentosServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>MeusInvestimentosServlet</servlet-name>
-        <url-pattern>/meus-investimentos</url-pattern>
-    </servlet-mapping>
 </web-app>

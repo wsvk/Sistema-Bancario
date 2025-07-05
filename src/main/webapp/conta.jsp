@@ -22,26 +22,29 @@
 
         <div style="margin: 30px 0;">
             <div class="operations">
-                <button class="operation-btn" onclick="alert('Funcionalidade em desenvolvimento!')">
+                <a href="#" class="operation-btn" onclick="alert('Funcionalidade em desenvolvimento!'); return false;">
                     <span class="icon">💰</span>
                     <span>Depositar</span>
-                </button>
-                <button class="operation-btn" onclick="alert('Funcionalidade em desenvolvimento!')">
+                </a>
+                <a href="#" class="operation-btn" onclick="alert('Funcionalidade em desenvolvimento!'); return false;">
                     <span class="icon">💸</span>
                     <span>Sacar</span>
-                </button>
-                <button class="operation-btn" onclick="alert('Funcionalidade em desenvolvimento!')">
+                </a>
+                <a href="#" class="operation-btn" onclick="alert('Funcionalidade em desenvolvimento!'); return false;">
                     <span class="icon">↗️</span>
                     <span>Transferir</span>
-                </button>
-                <button class="operation-btn" onclick="window.location.href='investir'">
+                </a>
+                <div style="display: flex; gap: 10px;">
+                    
+                </div>
+               <a href="./investir?id=${conta.getId()}" class="operation-btn">>
                     <span class="icon">📊</span>
                     <span>Investir</span>
-                </button>
-                <button class="operation-btn" onclick="window.location.href='meus-investimentos'">
+                </a>
+                <a href="./meus-investimentos?id=${conta.getId()}" class="operation-btn">
                     <span class="icon">📈</span>
                     <span>Meus Investimentos</span>
-                </button>
+                </a>
             </div>
         </div>
 
