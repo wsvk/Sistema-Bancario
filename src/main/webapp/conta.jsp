@@ -34,9 +34,13 @@
                     <span class="icon">↗️</span>
                     <span>Transferir</span>
                 </button>
-                <button class="operation-btn" onclick="alert('Funcionalidade em desenvolvimento!')">
+                <button class="operation-btn" onclick="window.location.href='investir'">
                     <span class="icon">📊</span>
                     <span>Investir</span>
+                </button>
+                <button class="operation-btn" onclick="window.location.href='meus-investimentos'">
+                    <span class="icon">📈</span>
+                    <span>Meus Investimentos</span>
                 </button>
             </div>
         </div>

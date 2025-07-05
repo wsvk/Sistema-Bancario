@@ -35,6 +35,10 @@ public class DB {
         return conn;
     }
 
+    public static Connection getConnection() {
+        return new DB().get();
+    }
+
     public void destroy() {
         try {
             conn.close();
