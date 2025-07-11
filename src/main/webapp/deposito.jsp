@@ -17,6 +17,7 @@
                 <p style="color: #059669; margin-bottom: 20px;"><%= request.getAttribute("mensagem") %></p>
             <% } %>
             <form method="post" action="deposito">
+                <input type="hidden" name="id" value="${contaId}" />
                 <div class="form-group">
                     <label for="valor">Digite o valor do depósito:</label>
                     <input type="number" step="0.01" name="valor" id="valor" placeholder="Ex: 100.00" required />

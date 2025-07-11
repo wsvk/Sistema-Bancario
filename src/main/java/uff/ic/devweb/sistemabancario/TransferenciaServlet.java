@@ -1,4 +1,3 @@
-
 package uff.ic.devweb.sistemabancario;
 
 import uff.ic.devweb.sistemabancario.model.Conta;
@@ -19,7 +18,8 @@ import java.sql.SQLException;
 public class TransferenciaServlet extends BaseServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Apenas exibe o formulário de transferência
+        String contaId = request.getParameter("id");
+        request.setAttribute("contaId", contaId);
         request.getRequestDispatcher("transferencia.jsp").forward(request, response);
     }
     @Override

@@ -23,6 +23,8 @@ public class DepositoServlet extends BaseServlet {
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String contaId = request.getParameter("id");
+        request.setAttribute("contaId", contaId);
         render(request, response, "deposito.jsp");
     }
     
@@ -34,35 +36,60 @@ public class DepositoServlet extends BaseServlet {
             return;
         }
         String valorStr = request.getParameter("valor");
+        String contaIdStr = request.getParameter("id");
+
+        Connection conn = null;
         try {
             double valor = Double.parseDouble(valorStr);
+            long contaId = Long.parseLong(contaIdStr);
+
             if (valor <= 0) {
                 request.setAttribute("erro", "O valor do depósito deve ser maior que zero.");
                 render(request, response, "deposito.jsp");
                 return;
             }
-            Connection conn = getConn();
-            PreparedStatement stmt1 = conn.prepareStatement("UPDATE contas SET saldo = saldo + ? WHERE id_usuario = ?");
-            stmt1.setDouble(1, valor);
-            stmt1.setLong(2, usuario.getId());
-            int rows = stmt1.executeUpdate();
+
+            conn = getConn();
+            conn.setAutoCommit(false); // Iniciar transação
+
+            // Atualizar saldo da conta
+            PreparedStatement stmtUpdate = conn.prepareStatement("UPDATE contas SET saldo = saldo + ? WHERE id = ? AND id_usuario = ?");
+            stmtUpdate.setDouble(1, valor);
+            stmtUpdate.setLong(2, contaId);
+            stmtUpdate.setLong(3, usuario.getId());
+            int rows = stmtUpdate.executeUpdate();
+
             if (rows > 0) {
-                PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO transacoes (conta_origem_id, conta_destino_id, tipo, valor)"
-                        + "VALUES (NULL, ?, 'DEPOSITO', ?)");
-                stmt2.setLong(1, usuario.getId());
-                stmt2.setDouble(2, valor);
-                stmt2.executeUpdate();
-                request.setAttribute("mensagem", "Depósito realizado com sucesso!");
-                response.sendRedirect("conta?id=" + usuario.getId());
-                return;
+                // Inserir transação
+                PreparedStatement stmtTransacao = conn.prepareStatement("INSERT INTO transacoes (conta_destino_id, tipo, valor) VALUES (?, 'DEPOSITO', ?)");
+                stmtTransacao.setLong(1, contaId);
+                stmtTransacao.setDouble(2, valor);
+                stmtTransacao.executeUpdate();
+
+                conn.commit(); // Confirmar transação
+                response.sendRedirect("conta?id=" + contaId);
             } else {
-                request.setAttribute("erro", "Erro ao realizar o depósito. Conta não encontrada.");
+                conn.rollback();
+                request.setAttribute("erro", "Erro ao realizar o depósito. Conta não encontrada ou não pertence ao usuário.");
+                render(request, response, "deposito.jsp");
             }
         } catch (NumberFormatException e) {
-            request.setAttribute("erro", "Valor inválido para depósito.");
+            request.setAttribute("erro", "Valor ou ID da conta inválido.");
+            render(request, response, "deposito.jsp");
         } catch (SQLException e) {
+            try {
+                if (conn != null) conn.rollback();
+            } catch (SQLException ex) {
+                // Logar erro de rollback
+            }
             request.setAttribute("erro", "Erro no banco de dados: " + e.getMessage());
+            render(request, response, "deposito.jsp");
+        } finally {
+            try {
+                if (conn != null) conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                // Logar erro ao resetar autoCommit
+            }
         }
-        render(request, response, "deposito.jsp");
     }
 }

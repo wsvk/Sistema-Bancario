@@ -24,6 +24,8 @@ public class SaqueServlet extends BaseServlet {
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String contaId = request.getParameter("id");
+        request.setAttribute("contaId", contaId);
         render(request, response, "saque.jsp");
     }
     
@@ -35,45 +37,81 @@ public class SaqueServlet extends BaseServlet {
             return;
         }
         String valorStr = request.getParameter("valor");
+        String contaIdStr = request.getParameter("id");
+        Connection conn = null;
+
         try {
             double valor = Double.parseDouble(valorStr);
+            long contaId = Long.parseLong(contaIdStr);
+
             if (valor <= 0) {
                 request.setAttribute("erro", "O valor do saque deve ser maior que zero.");
                 render(request, response, "saque.jsp");
                 return;
             }
-            Connection conn = getConn();
-            PreparedStatement checkSaldo = conn.prepareStatement("SELECT saldo FROM contas WHERE id_usuario = ?");
-            checkSaldo.setLong(1, usuario.getId());
-            ResultSet rs = checkSaldo.executeQuery();
-            while (rs.next()){
-                if (valor > rs.getDouble("saldo")){
-                    request.setAttribute("erro", "O valor do saque nao pode ser maior do que o valor contido na conta.");
+
+            conn = getConn();
+            conn.setAutoCommit(false);
+
+            // Verificar saldo
+            PreparedStatement psCheck = conn.prepareStatement("SELECT saldo FROM contas WHERE id = ? AND id_usuario = ?");
+            psCheck.setLong(1, contaId);
+            psCheck.setLong(2, usuario.getId());
+            ResultSet rs = psCheck.executeQuery();
+
+            if (rs.next()) {
+                double saldo = rs.getDouble("saldo");
+                if (saldo < valor) {
+                    conn.rollback();
+                    request.setAttribute("erro", "Saldo insuficiente.");
                     render(request, response, "saque.jsp");
                     return;
                 }
-            }
-            PreparedStatement stmt1 = conn.prepareStatement("UPDATE contas SET saldo = saldo - ? WHERE id_usuario = ?");
-            stmt1.setDouble(1, valor);
-            stmt1.setLong(2, usuario.getId());
-            int rows = stmt1.executeUpdate();
-            if (rows > 0) {
-                PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO transacoes (conta_origem_id, conta_destino_id, tipo, valor)"
-                        + "VALUES (?, NULL, 'SAQUE', ?)");
-                stmt2.setLong(1, usuario.getId());
-                stmt2.setDouble(2, valor);
-                stmt2.executeUpdate();
-                request.setAttribute("mensagem", "Depósito realizado com sucesso!");
-                response.sendRedirect("conta?id=" + usuario.getId());
-                return;
             } else {
-                request.setAttribute("erro", "Erro ao realizar o depósito. Conta não encontrada.");
+                conn.rollback();
+                request.setAttribute("erro", "Conta não encontrada ou não pertence ao usuário.");
+                render(request, response, "saque.jsp");
+                return;
             }
+
+            // Atualizar saldo
+            PreparedStatement psUpdate = conn.prepareStatement("UPDATE contas SET saldo = saldo - ? WHERE id = ?");
+            psUpdate.setDouble(1, valor);
+            psUpdate.setLong(2, contaId);
+            int rows = psUpdate.executeUpdate();
+
+            if (rows > 0) {
+                // Inserir transação
+                PreparedStatement psTransacao = conn.prepareStatement("INSERT INTO transacoes (conta_origem_id, tipo, valor) VALUES (?, 'SAQUE', ?)");
+                psTransacao.setLong(1, contaId);
+                psTransacao.setDouble(2, valor);
+                psTransacao.executeUpdate();
+
+                conn.commit();
+                response.sendRedirect("conta?id=" + contaId);
+            } else {
+                conn.rollback();
+                request.setAttribute("erro", "Erro ao realizar o saque.");
+                render(request, response, "saque.jsp");
+            }
+
         } catch (NumberFormatException e) {
-            request.setAttribute("erro", "Valor inválido para depósito.");
+            request.setAttribute("erro", "Valor ou ID da conta inválido.");
+            render(request, response, "saque.jsp");
         } catch (SQLException e) {
+            try {
+                if (conn != null) conn.rollback();
+            } catch (SQLException ex) {
+                // Log
+            }
             request.setAttribute("erro", "Erro no banco de dados: " + e.getMessage());
+            render(request, response, "saque.jsp");
+        } finally {
+            try {
+                if (conn != null) conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                // Log
+            }
         }
-        render(request, response, "deposito.jsp");
     }
 }

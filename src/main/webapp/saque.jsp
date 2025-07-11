@@ -16,13 +16,14 @@
                 <p style="color: #059669; margin-bottom: 20px;"><%= request.getAttribute("mensagem") %></p>
             <% } %>
             <form method="post" action="saque">
+                <input type="hidden" name="id" value="${contaId}" />
                 <div class="form-group">
                     <label for="valor">Digite o valor do saque:</label>
                     <input type="number" step="0.01" name="valor" id="valor" placeholder="Ex: 100.00" required />
                 </div>
                 <div class="buttons">
                     <button type="submit" class="btn btn-primary">Realizar saque</button>
-                    <a href="conta?id=${conta.getId()}" class="btn btn-back">Voltar</a>
+                    <a href="conta?id=${contaId}" class="btn btn-back">Voltar</a>
                 </div>
             </form>
         </div>

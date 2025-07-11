@@ -49,23 +49,25 @@ public class MenuServlet extends BaseServlet {
             return;
         }
         
-        LOGGER.info("Buscando contas para o usuário ID: " + usuario.getId());
-        
         // Buscar contas do usuário
-        List<Conta> contas = buscarContasDoUsuario(usuario.getId());
-        
-        // Log do número de contas encontradas
-        LOGGER.info("Encontradas " + contas.size() + " contas para o usuário ID: " + usuario.getId());
-        
-        // Calcular saldo total
-        BigDecimal saldoTotal = BigDecimal.ZERO;
-        for (Conta conta : contas) {
-            if (conta.getSaldo() != null) {
-                saldoTotal = saldoTotal.add(conta.getSaldo());
+        List<Conta> contas = new ArrayList<>();
+        BigDecimal saldoTotal = new BigDecimal(0);
+        try {
+            Connection conn = getConn();
+            PreparedStatement stmt = conn.prepareStatement("SELECT id, saldo, tipo FROM contas WHERE id_usuario = ?");
+            stmt.setLong(1, usuario.getId());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Conta conta = new Conta();
+                conta.setId(rs.getLong("id"));
+                conta.setSaldo(rs.getBigDecimal("saldo"));
+                conta.setTipo(rs.getString("tipo"));
+                contas.add(conta);
+                saldoTotal = saldoTotal.add(rs.getBigDecimal("saldo"));
             }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erro ao buscar contas do usuário", e);
         }
-        
-        LOGGER.info("Saldo total calculado: " + saldoTotal);
         
         request.setAttribute("usuario", usuario);
         request.setAttribute("contas", contas);
@@ -102,8 +104,8 @@ public class MenuServlet extends BaseServlet {
                     }
                 }
             }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erro ao buscar contas para o usuário ID: " + idUsuario, ex);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erro ao buscar contas do usuário", e);
         }
         
         return contas;
