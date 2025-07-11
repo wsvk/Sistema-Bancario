@@ -30,7 +30,7 @@
                     <span class="icon">💸</span>
                     <span>Sacar</span>
                 </a>
-                <a href="#" class="operation-btn" onclick="alert('Funcionalidade em desenvolvimento!'); return false;">
+                <a href="./transferencia?id=${conta.getId()}" class="operation-btn">
                     <span class="icon">↗️</span>
                     <span>Transferir</span>
                 </a>
