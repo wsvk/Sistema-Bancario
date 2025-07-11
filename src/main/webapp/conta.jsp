@@ -22,11 +22,11 @@
 
         <div style="margin: 30px 0;">
             <div class="operations">
-                <a href="#" class="operation-btn" onclick="alert('Funcionalidade em desenvolvimento!'); return false;">
+                <a href="./deposito?id=${conta.getId()}" class="operation-btn">
                     <span class="icon">💰</span>
                     <span>Depositar</span>
                 </a>
-                <a href="#" class="operation-btn" onclick="alert('Funcionalidade em desenvolvimento!'); return false;">
+                <a href="./saque?id=${conta.getId()}" class="operation-btn">
                     <span class="icon">💸</span>
                     <span>Sacar</span>
                 </a>
