@@ -25,7 +25,7 @@
                 </div>
                 <div class="buttons">
                     <input type="submit" class="btn btn-primary" value="Registrar">
-                    <a href=".." class="btn btn-secondary">Voltar</a>
+                    <a href="index.jsp" class="btn btn-secondary">Voltar</a>
                 </div>
             </form>
         </div>

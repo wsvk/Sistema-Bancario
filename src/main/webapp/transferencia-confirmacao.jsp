@@ -28,7 +28,6 @@
             <div style="margin-bottom: 18px; color: green; font-weight: bold;">
                 Transfer&ecirc;ncia realizada com sucesso!
             </div>
-            <a href="extrato?id=<%= contaOrigem %>" class="btn btn-primary" style="width: 100%;">Ver Extrato</a>
         </div>
     </div>
 </div>
